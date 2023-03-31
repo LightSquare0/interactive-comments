@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/planetscale-serverless';
 
 import { connect } from '@planetscale/database';
-import { users } from './schema';
+// import { users } from './schema';
 
 // create the connection
 const connection = connect({
@@ -10,6 +10,4 @@ const connection = connect({
   password: process.env['DATABASE_PASSWORD'],
 });
 
-const db = drizzle(connection);
-
-const allUsers = await db.select().from(users);
+export const db = drizzle(connection);
