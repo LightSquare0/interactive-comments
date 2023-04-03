@@ -3,7 +3,16 @@ import { db } from "@/db/db";
 import { comments, users } from "@/db/schema";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export interface NComment {
+  id: number;
+  content: string;
+  date: Date;
+  author: { id: number; username: string; avatarImage: string };
+}
+
+export type AllComments = NComment[];
+
+export async function GET() {
   const allComments = await db
     .select({
       id: comments.id,
@@ -11,7 +20,7 @@ export async function GET(request: Request) {
       date: comments.date,
       author: {
         id: users.id,
-        username: users.id,
+        username: users.username,
         avatarImage: users.avatarImage,
       },
     })
