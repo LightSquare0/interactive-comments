@@ -1,10 +1,16 @@
-const OAuth = async () => {
-  const code = new URLSearchParams(window.location.search).get("code");
+"use client";
 
-  await fetch(`http:localhost:3000/api/auth`)
+import { useEffect } from "react";
 
+const OAuth = () => {
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
 
-  return 
+    fetch(`http://localhost:3000/api/auth?code=${code}`);
+    console.log(code);
+  }, []);
+
+  return <div>maybe authenticated</div>;
 };
 
 export default OAuth;
