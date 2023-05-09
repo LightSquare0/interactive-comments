@@ -1,11 +1,7 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  
-  return new Response("Testing", {
-    status: 200,
-    headers: {
-      "Set-Cookie": "samper=false",
-    },
-  });
+  // let sula = request.headers;
+  // console.log("sula", sula);
 }
