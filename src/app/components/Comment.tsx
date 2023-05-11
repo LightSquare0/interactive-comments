@@ -13,7 +13,7 @@ interface Voter {
 
 const Voter: React.FC<Voter> = ({ votes, dispatch }) => {
   return (
-    <div className="flex flex-col items-center min-w-[2.5rem] w-fit px-3 py-2 gap-3 rounded-xl bg-gray-very-light ">
+    <div className="flex flex-col items-center min-w-[2.5rem] w-fit px-3 py-2 gap-3 rounded-xl bg-gray-very-light">
       <button
         className="text-blue-grayish-light"
         onClick={() => dispatch({ type: "increment_vote" })}
@@ -43,7 +43,7 @@ const Avatar: React.FC<{ avatarImage: string; username: string; date: Date }> = 
         height={32}
         src={avatarImage}
         className="rounded-full"
-        alt={`Image depicting user ${username}'s avatar.`}
+        alt={`Image depicting ${username}'s user avatar.`}
       />
       <span className="text-blue-dark">{username}</span>
       <span className="text-blue-grayish">{date ? date.toString() : "invalid date"}</span>

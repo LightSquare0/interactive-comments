@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export const useUser = async () => {
+export const useUser = cache(async () => {
   const browserCookies = cookies();
   const token = browserCookies.get("token");
-  // console.log("COOOOOOOOOKIEEEEEEESSSSSSSSSS", browserCookies.getAll());
   if (token?.value == undefined || token?.value.length < 1) return {};
 
   const githubUserResponse = await fetch("https://api.github.com/user", {
@@ -19,7 +19,5 @@ export const useUser = async () => {
     name: githubUser.name,
   };
 
-  console.log(token);
-
   return userObject;
-};
+});
