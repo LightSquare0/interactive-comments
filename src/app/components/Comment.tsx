@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { type Dispatch, useReducer } from "react";
+import { type Dispatch, useReducer, useContext, useState } from "react";
 import { type NComment } from "../api/comments/route";
+import { UserContext } from "../utils/UserContext";
+import Reply from "./Reply";
 
 interface Voter {
   votes: number;
@@ -31,11 +33,11 @@ const Voter: React.FC<Voter> = ({ votes, dispatch }) => {
   );
 };
 
-const Avatar: React.FC<{ avatarImage: string; username: string; date: Date }> = ({
-  avatarImage,
-  username,
-  date,
-}) => {
+const Avatar: React.FC<{
+  avatarImage: string;
+  username: string;
+  date: Date;
+}> = ({ avatarImage, username, date }) => {
   return (
     <div className="flex items-center gap-4">
       <img
@@ -46,12 +48,17 @@ const Avatar: React.FC<{ avatarImage: string; username: string; date: Date }> = 
         alt={`Image depicting ${username}'s user avatar.`}
       />
       <span className="text-blue-dark">{username}</span>
-      <span className="text-blue-grayish">{date ? date.toString() : "invalid date"}</span>
+      <span className="text-blue-grayish">
+        {date ? date.toString() : "invalid date"}
+      </span>
     </div>
   );
 };
 
-function reducer(state: { votes: number; voted: boolean }, action: { type: string }) {
+function reducer(
+  state: { votes: number; voted: boolean },
+  action: { type: string }
+) {
   if (action.type === "increment_vote") {
     return {
       votes: state.votes + 1,
@@ -68,24 +75,51 @@ function reducer(state: { votes: number; voted: boolean }, action: { type: strin
 }
 export const Comment: React.FC<{ comment: NComment }> = ({ comment }) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
+  const [displayReply, setDisplayReplay] = useState(false);
+
+  const user = useContext(UserContext);
+
+  function handleReplyButton() {
+    if (!user)
+      return (window.location.href =
+        "https://github.com/login/oauth/authorize?client_id=fa1888dfb1bd577bc2fe");
+
+    setDisplayReplay(!displayReply);
+  }
 
   return (
-    <div className="flex w-full gap-6 rounded-xl p-6 bg-white">
-      <Voter votes={state.votes} dispatch={dispatch} />
-      <div className="flex flex-col w-full gap-4">
-        <div className="flex w-full items-center justify-between">
-          <Avatar
-            avatarImage={comment.author.avatarImage}
-            username={comment.author.username}
-            date={comment.date}
-          />
-          <button className="flex items-center gap-2 text-blue-moderate">
-            <Image width={14} height={14} src="/icon-reply.svg" alt="Reply icon" />
-            Reply
-          </button>
+    <div className="grid gap-5">
+      <div className="flex w-full gap-6 rounded-xl p-6 bg-white">
+        <Voter votes={state.votes} dispatch={dispatch} />
+        <div className="flex flex-col w-full gap-4">
+          <div className="flex w-full items-center justify-between">
+            <Avatar
+              avatarImage={comment.author.avatarImage}
+              username={comment.author.username}
+              date={comment.date}
+            />
+            <button
+              onClick={handleReplyButton}
+              className="flex items-center gap-2 text-blue-moderate"
+            >
+              <Image
+                width={14}
+                height={14}
+                src="/icon-reply.svg"
+                alt="Reply icon"
+              />
+              Reply
+            </button>
+          </div>
+          <div className="text-blue-grayish">{comment.content}</div>
         </div>
-        <div className="text-blue-grayish">{comment.content}</div>
       </div>
+      {displayReply && user && (
+        <div className="flex ">
+          <div className="border mx-8 border-gray-200"></div>
+          <Reply avatarImage={user?.avatar_url} username={user.name} />
+        </div>
+      )}
     </div>
   );
 };

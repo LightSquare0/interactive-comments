@@ -20,7 +20,6 @@ export default async function Home() {
     <div className="w-full h-full">
       <div className="flex flex-col py-14 gap-5 w-[800px] mx-auto">
         <Comments comments={comments} />
-        <Reply avatarImage={user.avatar_url} username={user.name} />
       </div>
     </div>
   );
