@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { type Dispatch, useReducer, useContext, useState } from "react";
-import { type NComment } from "../api/comments/route";
 import { UserContext } from "../utils/UserContext";
 import Reply from "./Reply";
+import { FirstBatchComment, FirstBatchOfComments } from "../api/comments/route";
 
 interface Voter {
   votes: number;
@@ -73,7 +73,9 @@ function reducer(
   }
   throw Error("Unknown action.");
 }
-export const Comment: React.FC<{ comment: NComment }> = ({ comment }) => {
+export const Comment: React.FC<{ comment: FirstBatchComment }> = ({
+  comment,
+}) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
   const [displayReply, setDisplayReplay] = useState(false);
 
@@ -114,12 +116,18 @@ export const Comment: React.FC<{ comment: NComment }> = ({ comment }) => {
           <div className="text-blue-grayish">{comment.content}</div>
         </div>
       </div>
-      {displayReply && user && (
-        <div className="flex ">
-          <div className="border mx-8 border-gray-200"></div>
-          <Reply avatarImage={user?.avatar_url} username={user.name} />
-        </div>
-      )}
+      <div className="flex flex-col">
+        <div className="border mx-8 border-gray-200"></div>
+        {comment.Replies.map((reply: any) => (
+          <Comment comment={reply} />
+        ))}
+        {displayReply && user && (
+          <div className="flex">
+            <div className="border mx-8 border-gray-200"></div>
+            <Reply avatarImage={user?.avatar_url} username={user.name} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

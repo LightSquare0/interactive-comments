@@ -1,14 +1,14 @@
 "use client";
 
 import { useContext } from "react";
-import { type AllComments } from "./api/comments/route";
 import { Comment } from "./components/Comment";
 import Reply from "./components/Reply";
 import { UserContext } from "./utils/UserContext";
 import Button from "./components/Button";
+import { FirstBatchOfComments } from "./api/comments/route";
 
 interface CommentsProps {
-  comments: AllComments;
+  comments: FirstBatchOfComments;
 }
 
 export function Comments({ comments }: CommentsProps) {

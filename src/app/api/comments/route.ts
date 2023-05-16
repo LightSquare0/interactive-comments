@@ -1,38 +1,30 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/app/utils/prisma";
+import { Prisma } from "@prisma/client";
 
-export interface NComment {
-  id: number;
-  content: string;
-  date: Date;
-  author: { id: number; username: string; avatarImage: string };
-}
+export type FirstBatchOfComments = Prisma.PromiseReturnType<
+  typeof getFirstBatchOfComments
+>;
 
-export type AllComments = NComment[];
-const prisma = new PrismaClient();
-export async function GET() {
-  // const allComments = await db
-  //   .select({
-  //     id: comments.id,
-  //     content: comments.content,
-  //     date: comments.date,
-  //     author: {
-  //       id: users.id,
-  //       username: users.username,
-  //       avatarImage: users.avatarImage,
-  //     },
-  //   })
-  //   .from(comments)
-  //   .leftJoin(users, eq(comments.authorId, users.id));
+export type FirstBatchComment = FirstBatchOfComments[0];
 
-  const allComments = await prisma.comment.findMany({
+const getFirstBatchOfComments = async () => {
+  const firstBatchOfComments = await prisma.comment.findMany({
     select: {
       id: true,
-      author: { select: { id: true, username: true, avatarImage: true } },
+      author: true,
       date: true,
       content: true,
+      Replies: {
+        include: { Replies: true },
+      },
     },
   });
 
-  return NextResponse.json(allComments);
+  return firstBatchOfComments;
+};
+
+export async function GET() {
+  const firstBatchOfComments = await getFirstBatchOfComments();
+  return NextResponse.json(firstBatchOfComments);
 }

@@ -6,6 +6,14 @@ const Reply: React.FC<{ username: string; avatarImage: string }> = ({
   username,
   avatarImage,
 }) => {
+  async function submitReply() {
+    await fetch("http://localhost:3000/api/comments/addReply/", {
+      method: "POST",
+      body: JSON.stringify({ commentId: "2" }),
+    }).finally(() => console.log("sa zicem ca mearsa"));
+    console.log("sa zicem ca mearsax2");
+  }
+
   return (
     <div className="flex w-full bg-white rounded-xl gap-4 p-6">
       <img
@@ -20,7 +28,7 @@ const Reply: React.FC<{ username: string; avatarImage: string }> = ({
         placeholder="Add a comment..."
         rows={3}
       ></textarea>
-      <Button onClick={() => console.log("samper")}>SEND</Button>
+      <Button onClick={submitReply}>SEND</Button>
     </div>
   );
 };
