@@ -4,7 +4,7 @@ import Image from "next/image";
 import { type Dispatch, useReducer, useContext, useState } from "react";
 import { UserContext } from "../utils/UserContext";
 import Reply from "./Reply";
-import { FirstBatchComment, FirstBatchOfComments } from "../api/comments/route";
+import type { PComment } from "../api/comments/route";
 
 interface Voter {
   votes: number;
@@ -73,9 +73,7 @@ function reducer(
   }
   throw Error("Unknown action.");
 }
-export const Comment: React.FC<{ comment: FirstBatchComment }> = ({
-  comment,
-}) => {
+export const Comment: React.FC<{ comment: PComment }> = ({ comment }) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
   const [displayReply, setDisplayReplay] = useState(false);
 
@@ -90,7 +88,7 @@ export const Comment: React.FC<{ comment: FirstBatchComment }> = ({
   }
 
   return (
-    <div className="grid gap-5">
+    <div className="flex flex-col gap-5 w-full">
       <div className="flex w-full gap-6 rounded-xl p-6 bg-white">
         <Voter votes={state.votes} dispatch={dispatch} />
         <div className="flex flex-col w-full gap-4">
@@ -116,17 +114,18 @@ export const Comment: React.FC<{ comment: FirstBatchComment }> = ({
           <div className="text-blue-grayish">{comment.content}</div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <div className="border mx-8 border-gray-200"></div>
-        {comment.Replies.map((reply: any) => (
-          <Comment comment={reply} />
-        ))}
+      <div className="flex flex-col gap-5">
         {displayReply && user && (
           <div className="flex">
             <div className="border mx-8 border-gray-200"></div>
             <Reply avatarImage={user?.avatar_url} username={user.name} />
           </div>
         )}
+        <div className="flex w-full">
+          <div className="border mx-8 border-gray-200"></div>
+          {comment.Replies &&
+            comment.Replies.map((reply) => <Comment comment={reply} />)}
+        </div>
       </div>
     </div>
   );

@@ -1,22 +1,26 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/utils/prisma";
-import { Prisma } from "@prisma/client";
+import { Comment, User } from "@prisma/client";
 
-export type FirstBatchOfComments = Prisma.PromiseReturnType<
-  typeof getFirstBatchOfComments
->;
+// export type FirstBatchOfComments = Prisma.PromiseReturnType<
+//   typeof getFirstBatchOfComments
+// >;
 
-export type FirstBatchComment = FirstBatchOfComments[0];
+// export type FirstBatchComment = FirstBatchOfComments[0];
+
+export type PComment = Comment & {
+  author: User;
+  Replies: PComments;
+};
+
+export type PComments = PComment[];
 
 const getFirstBatchOfComments = async () => {
   const firstBatchOfComments = await prisma.comment.findMany({
-    select: {
-      id: true,
+    include: {
       author: true,
-      date: true,
-      content: true,
       Replies: {
-        include: { Replies: true },
+        include: { author: true, Replies: { include: { author: true } } },
       },
     },
   });

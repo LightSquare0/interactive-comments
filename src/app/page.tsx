@@ -1,5 +1,5 @@
 import { Comments } from "./Comments";
-import { FirstBatchOfComments } from "./api/comments/route";
+import type { PComments } from "./api/comments/route";
 import { useUser } from "./utils/useUser";
 
 export async function getComments() {
@@ -10,7 +10,7 @@ export async function getComments() {
 
 export default async function Home() {
   const user = await useUser();
-  const comments: FirstBatchOfComments = await getComments();
+  const comments: PComments = await getComments();
 
   return (
     <div className="w-full h-full">

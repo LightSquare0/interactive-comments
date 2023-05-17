@@ -5,10 +5,10 @@ import { Comment } from "./components/Comment";
 import Reply from "./components/Reply";
 import { UserContext } from "./utils/UserContext";
 import Button from "./components/Button";
-import { FirstBatchOfComments } from "./api/comments/route";
+import type { PComments } from "./api/comments/route";
 
 interface CommentsProps {
-  comments: FirstBatchOfComments;
+  comments: PComments;
 }
 
 export function Comments({ comments }: CommentsProps) {
@@ -26,7 +26,8 @@ export function Comments({ comments }: CommentsProps) {
         )}
       </div>
       {comments.map((comment) => {
-        return <Comment key={comment.id} comment={comment} />;
+        if (comment.attachedToCommentId == -1)
+          return <Comment key={comment.id} comment={comment} />;
       })}
     </>
   );
