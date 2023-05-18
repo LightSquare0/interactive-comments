@@ -11,6 +11,8 @@ export const useUser = cache(async (): Promise<UserContext> => {
     headers: { Authorization: `Bearer ${token?.value}` },
   });
 
+  if (!githubUserResponse.ok) return null;
+
   const githubUser = await githubUserResponse.json();
 
   const userObject: User = {

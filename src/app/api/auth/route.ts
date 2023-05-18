@@ -1,3 +1,5 @@
+import { prisma } from "@/app/utils/prisma";
+import { useUser } from "@/app/utils/useUser";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -38,6 +40,30 @@ export async function GET(request: Request) {
       new Date().setTime(new Date().getTime() + 2629800000)
     )};samesite=lax;path=/`
   );
+
+  const userData = await useUser();
+
+  if (!userData)
+    return new Response("Couldn't get github user data", {
+      status: 403,
+    });
+
+  //Create user in the database if they don't exit yet.
+  const userDb = await prisma.user.findUnique({
+    where: {
+      githubId: userData?.id,
+    },
+  });
+
+  if (!userDb) {
+    await prisma.user.create({
+      data: {
+        githubId: userData.id,
+        username: userData?.login,
+        avatarImage: userData.avatar_url,
+      },
+    });
+  }
 
   return new Response("Authenticated!", {
     status: 200,

@@ -15,7 +15,8 @@ model User {
   id          Int       @id @default(autoincrement())
   username    String    @db.VarChar(255)
   avatarImage String    @db.VarChar(255)
-  Comment     Comment[]
+  githubId    Int       @db.Int @unique
+  Comments    Comment[]
 }
 
 model Comment {

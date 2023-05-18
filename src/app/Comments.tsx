@@ -15,7 +15,7 @@ export function Comments({ comments }: CommentsProps) {
   const user = useContext(UserContext);
 
   return (
-    <>
+    <div className="flex flex-col gap-5 py-14 w-[800px] mx-auto">
       <div className="flex justify-end">
         {user ? (
           <Reply avatarImage={user.avatar_url} username={user.name} />
@@ -29,6 +29,6 @@ export function Comments({ comments }: CommentsProps) {
         if (comment.attachedToCommentId == -1)
           return <Comment key={comment.id} comment={comment} />;
       })}
-    </>
+    </div>
   );
 }

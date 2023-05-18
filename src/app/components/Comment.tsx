@@ -73,7 +73,10 @@ function reducer(
   }
   throw Error("Unknown action.");
 }
-export const Comment: React.FC<{ comment: PComment }> = ({ comment }) => {
+export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
+  comment,
+  styles,
+}) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
   const [displayReply, setDisplayReplay] = useState(false);
 
@@ -88,8 +91,14 @@ export const Comment: React.FC<{ comment: PComment }> = ({ comment }) => {
   }
 
   return (
-    <div className="flex flex-col gap-5 w-full">
-      <div className="flex w-full gap-6 rounded-xl p-6 bg-white">
+    <div
+      className={`flex flex-col ${
+        (comment.Replies && comment.Replies.length > 0) || displayReply
+          ? "gap-5"
+          : ""
+      } w-full`}
+    >
+      <div className={`flex w-full gap-6 rounded-xl p-6 bg-white`}>
         <Voter votes={state.votes} dispatch={dispatch} />
         <div className="flex flex-col w-full gap-4">
           <div className="flex w-full items-center justify-between">
@@ -114,18 +123,25 @@ export const Comment: React.FC<{ comment: PComment }> = ({ comment }) => {
           <div className="text-blue-grayish">{comment.content}</div>
         </div>
       </div>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col">
         {displayReply && user && (
           <div className="flex">
             <div className="border mx-8 border-gray-200"></div>
-            <Reply avatarImage={user?.avatar_url} username={user.name} />
+            <Reply
+              comment={comment}
+              avatarImage={user?.avatar_url}
+              username={user?.name}
+            />
           </div>
         )}
-        <div className="flex w-full">
-          <div className="border mx-8 border-gray-200"></div>
-          {comment.Replies &&
-            comment.Replies.map((reply) => <Comment comment={reply} />)}
-        </div>
+        {comment.Replies && (
+          <div className="flex w-full">
+            <div className="border mx-8 border-gray-200"></div>
+            {comment.Replies.map((reply) => (
+              <Comment key={comment.id} styles="mb-5" comment={reply} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -14,9 +14,7 @@ export default async function Home() {
 
   return (
     <div className="w-full h-full">
-      <div className="flex flex-col py-14 gap-5 w-[800px] mx-auto">
-        <Comments comments={comments} />
-      </div>
+      <Comments comments={comments} />
     </div>
   );
 }
