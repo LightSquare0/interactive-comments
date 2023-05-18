@@ -2,13 +2,18 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import type { User, UserContext } from "./UserContext";
 
-export const useUser = cache(async (): Promise<UserContext> => {
-  const browserCookies = cookies();
-  const token = browserCookies.get("token");
-  if (token?.value == undefined || token?.value.length < 1) return null;
+export const useUser = cache(async (authToken?: string): Promise<UserContext> => {
+  let token;
+  if (authToken) {
+    token = authToken;
+  } else {
+    const browserCookies = cookies();
+    token = browserCookies.get("token")?.value;
+  }
+  if (token == undefined || token.length < 1) return null;
 
   const githubUserResponse = await fetch("https://api.github.com/user", {
-    headers: { Authorization: `Bearer ${token?.value}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!githubUserResponse.ok) return null;

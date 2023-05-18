@@ -27,31 +27,24 @@ const Reply: React.FC<ReplyProps> = ({ username, avatarImage, comment }) => {
         });
       } catch (error) {
         throw console.log(
-          `Failed to submit reply to comment ${JSON.stringify(
-            comment
-          )} with the error ${error}.`
+          `Failed to submit reply to comment ${JSON.stringify(comment)} with the error ${error}.`
         );
       }
       return;
     }
 
     try {
-      await fetch("http://localhost:3000/api/comments/addReply/", {
+      await fetch("http://localhost:3000/api/comments/addComment/", {
         method: "POST",
         body: JSON.stringify({
-          attachedToCommendId: comment?.id,
-          content: e.t,
+          content: formContent,
         }),
       });
     } catch (error) {
       throw console.log(
-        `Failed to submit reply to comment ${JSON.stringify(
-          comment
-        )} with the error ${error}.`
+        `Failed to submit reply to comment ${JSON.stringify(comment)} with the error ${error}.`
       );
     }
-
-    console.log("sa zicem ca mearsax2");
   }
 
   return (

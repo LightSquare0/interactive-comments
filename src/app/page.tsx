@@ -1,6 +1,5 @@
 import { Comments } from "./Comments";
 import type { PComments } from "./api/comments/route";
-import { useUser } from "./utils/useUser";
 
 export async function getComments() {
   const res = await fetch("http://localhost:3000/api/comments/");
@@ -9,7 +8,6 @@ export async function getComments() {
 }
 
 export default async function Home() {
-  const user = await useUser();
   const comments: PComments = await getComments();
 
   return (

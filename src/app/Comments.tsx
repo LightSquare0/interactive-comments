@@ -14,6 +14,13 @@ interface CommentsProps {
 export function Comments({ comments }: CommentsProps) {
   const user = useContext(UserContext);
 
+  async function submitComment(e: any) {
+    e.preventDefault();
+    const formContent = e.target.elements.content.value;
+    if (formContent.length <= 0) return;
+
+  }
+
   return (
     <div className="flex flex-col gap-5 py-14 w-[800px] mx-auto">
       <div className="flex justify-end">

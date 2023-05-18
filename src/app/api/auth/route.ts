@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     )};samesite=lax;path=/`
   );
 
-  const userData = await useUser();
+  const userData = await useUser(authToken);
 
   if (!userData)
     return new Response("Couldn't get github user data", {
