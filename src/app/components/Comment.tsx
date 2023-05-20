@@ -5,7 +5,6 @@ import { type Dispatch, useReducer, useContext, useState } from "react";
 import { UserContext } from "../utils/UserContext";
 import Reply from "./Reply";
 import type { PComment } from "../api/comments/route";
-import { useRouter } from "next/navigation";
 
 interface Voter {
   votes: number;
@@ -80,16 +79,15 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
   const [commentState, setCommentState] = useState(comment);
-  const [displayReply, setDisplayReplay] = useState(false);
+  const [displayReply, setDisplayReply] = useState(false);
   const user = useContext(UserContext);
-  const router = useRouter();
 
   function handleReplyButton() {
     if (!user)
       return (window.location.href =
         "https://github.com/login/oauth/authorize?client_id=fa1888dfb1bd577bc2fe");
 
-    setDisplayReplay(!displayReply);
+    setDisplayReply(!displayReply);
   }
 
   async function onSubmitReply(e: any) {
@@ -123,7 +121,7 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
         ...commentState.Replies,
       ],
     });
-    setDisplayReplay(false);
+    setDisplayReply(false);
     // TODO: Inform user if comment posting fails
     try {
       await fetch("http://localhost:3000/api/comments/addReply/", {

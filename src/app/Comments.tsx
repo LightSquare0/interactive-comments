@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Comment } from "./components/Comment";
 import Reply from "./components/Reply";
 import { UserContext } from "./utils/UserContext";
@@ -13,12 +13,33 @@ interface CommentsProps {
 
 export function Comments({ comments }: CommentsProps) {
   const user = useContext(UserContext);
+  const [displayReply, setDisplayReply] = useState(false);
+  const [commentsState, setCommentsState] = useState(comments);
 
   async function submitComment(e: any) {
     e.preventDefault();
+    if (!user) return;
     const formContent = e.target.elements.content.value;
     if (formContent.length <= 0) return;
 
+    setCommentsState([
+      {
+        id: commentsState.length - 1,
+        author: {
+          username: user?.name,
+          avatarImage: user.avatar_url,
+          githubId: user.id,
+          id: user.id,
+        },
+        authorId: user.id,
+        attachedToCommentId: -1,
+        content: formContent,
+        date: new Date().toISOString(),
+      },
+      ...commentsState,
+    ]);
+    setDisplayReply(false);
+    // TODO: Inform user if comment posting fails
     try {
       await fetch("http://localhost:3000/api/comments/addComment/", {
         method: "POST",
@@ -49,7 +70,7 @@ export function Comments({ comments }: CommentsProps) {
           </a>
         )}
       </div>
-      {comments.map((comment) => (
+      {commentsState.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
     </div>
