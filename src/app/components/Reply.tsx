@@ -8,49 +8,19 @@ interface ReplyProps {
   username: string;
   avatarImage: string;
   comment?: PComment;
+  onSubmit: (e: any) => Promise<void>;
 }
 
-const Reply: React.FC<ReplyProps> = ({ username, avatarImage, comment }) => {
-  async function submitReply(e: any) {
-    e.preventDefault();
-    const formContent = e.target.elements.content.value;
-    if (formContent.length <= 0) return;
-
-    if (comment) {
-      try {
-        await fetch("http://localhost:3000/api/comments/addReply/", {
-          method: "POST",
-          body: JSON.stringify({
-            attachedToCommendId: comment?.id,
-            content: e.t,
-          }),
-        });
-      } catch (error) {
-        throw console.log(
-          `Failed to submit reply to comment ${JSON.stringify(comment)} with the error ${error}.`
-        );
-      }
-      return;
-    }
-
-    try {
-      await fetch("http://localhost:3000/api/comments/addComment/", {
-        method: "POST",
-        body: JSON.stringify({
-          content: formContent,
-        }),
-      });
-    } catch (error) {
-      throw console.log(
-        `Failed to submit reply to comment ${JSON.stringify(comment)} with the error ${error}.`
-      );
-    }
-  }
-
+const Reply: React.FC<ReplyProps> = ({
+  username,
+  avatarImage,
+  comment,
+  onSubmit,
+}) => {
   return (
     <form
       method="POST"
-      onSubmit={submitReply}
+      onSubmit={onSubmit}
       className="flex w-full bg-white rounded-xl gap-4 p-6"
     >
       <img

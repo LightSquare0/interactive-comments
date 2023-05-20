@@ -2,7 +2,9 @@ import { Comments } from "./Comments";
 import type { PComments } from "./api/comments/route";
 
 export async function getComments() {
-  const res = await fetch("http://localhost:3000/api/comments/");
+  const res = await fetch("http://localhost:3000/api/comments/", {
+    cache: "no-store",
+  });
   const comments = await res.json();
   return comments;
 }

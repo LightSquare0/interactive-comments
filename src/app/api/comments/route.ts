@@ -23,6 +23,9 @@ const getFirstBatchOfComments = async () => {
         include: { author: true, Replies: { include: { author: true } } },
       },
     },
+    where: {
+      attachedToCommentId: -1,
+    },
   });
 
   return firstBatchOfComments;

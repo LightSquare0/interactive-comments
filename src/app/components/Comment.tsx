@@ -5,6 +5,7 @@ import { type Dispatch, useReducer, useContext, useState } from "react";
 import { UserContext } from "../utils/UserContext";
 import Reply from "./Reply";
 import type { PComment } from "../api/comments/route";
+import { useRouter } from "next/navigation";
 
 interface Voter {
   votes: number;
@@ -78,9 +79,10 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
   styles,
 }) => {
   const [state, dispatch] = useReducer(reducer, { votes: 0, voted: false });
+  const [commentState, setCommentState] = useState(comment);
   const [displayReply, setDisplayReplay] = useState(false);
-
   const user = useContext(UserContext);
+  const router = useRouter();
 
   function handleReplyButton() {
     if (!user)
@@ -90,10 +92,61 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
     setDisplayReplay(!displayReply);
   }
 
+  async function onSubmitReply(e: any) {
+    e.preventDefault();
+
+    if (!user) return;
+
+    const formContent = e.target.elements.content.value;
+    if (formContent.length <= 0) return;
+
+    let replyId = comment.Replies.length
+      ? commentState.Replies[comment.Replies.length - 1].id
+      : 0;
+    console.log(replyId);
+    setCommentState({
+      ...commentState,
+      Replies: [
+        {
+          id: replyId,
+          author: {
+            username: user?.name,
+            avatarImage: user.avatar_url,
+            githubId: user.id,
+            id: user.id,
+          },
+          authorId: user.id,
+          attachedToCommentId: commentState.id,
+          content: formContent,
+          date: new Date().toISOString(),
+        },
+        ...commentState.Replies,
+      ],
+    });
+    setDisplayReplay(false);
+    // TODO: Inform user if comment posting fails
+    try {
+      await fetch("http://localhost:3000/api/comments/addReply/", {
+        method: "POST",
+        body: JSON.stringify({
+          attachedToCommentId: comment?.id,
+          content: formContent,
+        }),
+      });
+    } catch (error) {
+      throw console.log(
+        `Failed to submit reply to comment ${JSON.stringify(
+          comment
+        )} with the error ${error}.`
+      );
+    }
+  }
+
   return (
     <div
       className={`flex flex-col ${
-        (comment.Replies && comment.Replies.length > 0) || displayReply
+        (commentState.Replies && commentState.Replies.length > 0) ||
+        displayReply
           ? "gap-5"
           : ""
       } w-full`}
@@ -103,9 +156,9 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
         <div className="flex flex-col w-full gap-4">
           <div className="flex w-full items-center justify-between">
             <Avatar
-              avatarImage={comment.author.avatarImage}
-              username={comment.author.username}
-              date={comment.date}
+              avatarImage={commentState.author.avatarImage}
+              username={commentState.author.username}
+              date={commentState.date}
             />
             <button
               onClick={handleReplyButton}
@@ -120,26 +173,29 @@ export const Comment: React.FC<{ comment: PComment; styles?: string }> = ({
               Reply
             </button>
           </div>
-          <div className="text-blue-grayish">{comment.content}</div>
+          <div className="text-blue-grayish">{commentState.content}</div>
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-5 w-full">
         {displayReply && user && (
           <div className="flex">
             <div className="border mx-8 border-gray-200"></div>
             <Reply
-              comment={comment}
+              comment={commentState}
+              onSubmit={onSubmitReply}
               avatarImage={user?.avatar_url}
               username={user?.name}
             />
           </div>
         )}
-        {comment.Replies && (
+        {commentState.Replies && (
           <div className="flex w-full">
             <div className="border mx-8 border-gray-200"></div>
-            {comment.Replies.map((reply) => (
-              <Comment key={comment.id} styles="mb-5" comment={reply} />
-            ))}
+            <div className="flex flex-col gap-5 w-full">
+              {commentState.Replies.map((reply) => (
+                <Comment styles="mb-5" key={reply.id} comment={reply} />
+              ))}
+            </div>
           </div>
         )}
       </div>

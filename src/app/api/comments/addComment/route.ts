@@ -3,11 +3,10 @@ import { useUser } from "@/app/utils/useUser";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
+  const req = await request.json();
+
   const cookieStore = cookies();
   const token = cookieStore.get("token");
-  console.log("COOKIE TOKENNNNN", token);
-
-  const req = await request.json();
 
   const user = await useUser(token?.value);
 

@@ -1,14 +1,26 @@
 import { prisma } from "@/app/utils/prisma";
+import { useUser } from "@/app/utils/useUser";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req.commentId);
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
+
+  const user = await useUser(token?.value);
+
+  if (!user)
+    return new Response("Couldn't retrieve github user data.", {
+      status: 403,
+    });
+
+  console.log(req);
 
   await prisma.comment.create({
     data: {
-      author: { connect: { id: 1 } },
-      attachedToComment: { connect: { id: parseInt(req.commentId) } },
-      content: "Ce pot spune",
+      author: { connect: { githubId: user.id } },
+      attachedToComment: { connect: { id: req.attachedToCommentId } },
+      content: req.content,
     },
   });
 
