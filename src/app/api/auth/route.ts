@@ -10,9 +10,11 @@ export async function GET(request: Request) {
       status: 400,
     });
 
+  if (!(process.env.CLIENT_ID && process.env.CLIENT_SECRET))
+    return new Response("Couldn't POST github endpoint. #1");
   let data = new FormData();
-  data.append("client_id", "fa1888dfb1bd577bc2fe");
-  data.append("client_secret", "ae61bb7e3f274a2cbbff4cd82466e5b4877fe7ad");
+  data.append("client_id", process.env.CLIENT_ID);
+  data.append("client_secret", process.env.CLIENT_SECRET);
   data.append("code", code);
   console.log(code);
 
@@ -22,7 +24,7 @@ export async function GET(request: Request) {
   });
 
   if (!result.ok)
-    return new Response("Couldn't POST github endpoint.", {
+    return new Response("Couldn't POST github endpoint. 2#", {
       status: 400,
     });
   const response = await result.text();

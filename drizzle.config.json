@@ -1,5 +1,0 @@
-{
-  "schema": "./src/db", 
-  "connectionString": "mysql://k80m25owe3s1mh3q187l:pscale_pw_rGt16kolmp4oOUOmyDH6RDbTKQKvs7EiHzEaQ6WA4U0@aws.connect.psdb.cloud/comments?ssl={}"
-}
-
